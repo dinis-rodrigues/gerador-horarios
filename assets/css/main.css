@@ -1,0 +1,201 @@
+#footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
+
+li {
+  margin: 5px 0 0 0;
+}
+
+.alertCUSTOM {
+  padding: 20px;
+  background-color: #f44336;
+  color: white;
+  opacity: 1;
+  transition: opacity 0.6s;
+  margin-bottom: 15px;
+}
+
+.alertCUSTOM.info {
+  background-color: #1975ff;
+  border-radius: 25px;
+}
+
+.form-control {
+  text-transform: none;
+}
+
+.btn-field {
+  background-color: transparent !important;
+  border-color: white !important;
+}
+.solar:hover {
+  background-color: #ffa6009a !important;
+}
+.hydrogen:hover {
+  background-color: #ff00ea80 !important;
+}
+.ai:hover {
+  background-color: #ff000083 !important;
+}
+.composites:hover {
+  background-color: #3700ff80 !important;
+}
+.hydrofoils:hover {
+  background-color: #00ffbf8e !important;
+}
+
+.apply {
+  background-color: #00c3ffe7 important!;
+  border: 1px solid white !important;
+}
+
+.apply:hover {
+  background-color: #00c3ffe7 !important;
+}
+
+/* .btn-field:hover {
+  border-color: white !important;
+  border: 2px solid white;
+} */
+
+.period-middle-slot {
+  border-top: none;
+  border-bottom: none;
+}
+
+.course {
+  margin: 1rem;
+  width: fit-content;
+  box-sizing: border-box;
+  border: 25px;
+  box-shadow: rgba(3, 102, 214, 0.3) 0px 0px 0px 3px;
+}
+
+#courses {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.creator {
+  text-decoration: none;
+  color: inherit;
+}
+
+.creator:hover {
+  color: #1975ff;
+  text-decoration: underline;
+}
+
+/* Table Style */
+.timetable {
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+  color: #003333;
+  text-decoration: bold;
+  border-collapse: collapse;
+  border-color: #000;
+  border-width: 2px;
+  border-style: solid;
+  padding: 0px !important;
+}
+
+.timetable tr {
+  font-size: 9px;
+  color: #003333;
+  font-weight: bold;
+  background-color: #e1e1e1;
+  text-align: left;
+}
+
+.timetable th {
+  font-size: 11px;
+  color: #333333;
+  background-color: #999999;
+  text-align: center;
+  height: 20px;
+  vertical-align: middle;
+  border-style: solid;
+  border-top-width: 2px;
+  border-bottom-width: 2px;
+  border-left-width: 1.5px;
+  border-right-width: 1.5px;
+}
+
+.period-first-slot {
+  border-width: 1.5px;
+  border-style: solid;
+  border-bottom-style: none;
+}
+
+.period-middle-slot {
+  border-width: 1.5px;
+  border-right-style: solid;
+  border-left-style: solid;
+  text-align: center;
+}
+
+.period-last-slot {
+  border-width: 1.5px;
+  border-style: solid;
+  border-top-style: none;
+}
+
+.period-single-slot {
+  border-width: 1.5px;
+  border-style: solid;
+}
+
+.period-empty-slot {
+  border-width: 1px;
+  border-top-style: dashed;
+  border-left-style: solid;
+  border-right-style: solid;
+}
+
+td.period-empty-slot {
+  padding: 0 !important;
+  height: 20px;
+}
+
+.period-hours {
+  font-size: 10px; /*changed from 11px to 10px*/
+  color: #333333;
+  background-color: #999999;
+  text-align: center;
+  /*height: 20px;*/
+  vertical-align: middle;
+  border-style: solid;
+  border-width: 1px;
+  border-left-width: 1px;
+  border-right-width: 2px;
+}
+
+.timetable a {
+  font-weight: bold;
+  font-size: 9px;
+  border-style: none;
+}
+
+table.timetable tr td.period-last-slot img {
+  float: right;
+  border: none;
+  padding: 2px;
+}
+
+table.timetable tr td.period-single-slot img {
+  float: right;
+  border: none;
+  padding: 2px;
+}
+
+span.float-left {
+  float: left;
+}
+
+th,
+td {
+  padding: 0px !important;
+}
+
+/* <div class="row justify-content-center min-vh-100" style="margin: 0;x !important;height:100%"><div class="col">ola</div><div class="col" style="background-color: aqua;">adeus</div></div> */

@@ -31,3 +31,14 @@ db.ref("/public/scheduleWebsite/visitCount")
     // Update new count on database
     db.ref("/public/scheduleWebsite/visitCount").set(visitors);
   });
+
+// Retrieve github repo stars
+fetch(`https://api.github.com/repos/dinis-rodrigues/gerador-horarios`).then(
+  async (response) => {
+    const data = await response.json();
+    console.log(data);
+    const starCount = data.stargazers_count;
+
+    $("#starCount").text(starCount);
+  }
+);

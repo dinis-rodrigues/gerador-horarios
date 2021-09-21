@@ -4,6 +4,9 @@
   width: 100%;
 }
 
+body {
+  overflow-x: hidden;
+}
 li {
   margin: 5px 0 0 0;
 }
@@ -25,6 +28,16 @@ li {
 .form-control {
   text-transform: none;
 }
+
+/* .btn-hydrogen {
+  background-color: #b424f7 !important;
+  border-color: #b424f7;
+}
+
+.btn-hydrogen:hover {
+  background-color: #a215e4 !important;
+  border-color: #a215e4;
+} */
 
 .btn-field {
   background-color: transparent !important;
@@ -199,3 +212,47 @@ td {
 }
 
 /* <div class="row justify-content-center min-vh-100" style="margin: 0;x !important;height:100%"><div class="col">ola</div><div class="col" style="background-color: aqua;">adeus</div></div> */
+
+.cursor-p {
+  cursor: pointer;
+}
+
+.cursor-d {
+  cursor: default;
+}
+.parentTriangle {
+  position: relative;
+  width: 50px;
+}
+.arrow {
+  position: absolute;
+  top: 50%;
+  width: 50px;
+  height: 50px;
+  background: transparent;
+  border-top: 1vmin solid #1975ff;
+  border-right: 1vmin solid #1975ff;
+  box-shadow: 0 0 0 lightgray;
+  transition: all 200ms ease;
+}
+.arrow.left {
+  left: 30%;
+  transform: translate3d(0, -50%, 0) rotate(-135deg);
+}
+.arrow.right {
+  right: 30%;
+  transform: translate3d(0, -50%, 0) rotate(45deg);
+}
+.arrow:hover {
+  border-color: rgb(0, 195, 255);
+  box-shadow: 0.5vmin -0.5vmin 0 #1975ff;
+}
+.arrow:before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-40%, -60%) rotate(45deg);
+  width: 200%;
+  height: 200%;
+}

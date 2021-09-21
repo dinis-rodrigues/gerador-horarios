@@ -72,7 +72,7 @@ const submitForm = () => {
   //   var encodedURL = encodeURIComponent(
   //     document.getElementById("courseURL").value
   //   );
-  xmlhttp.open("POST", "generate_timetables.php", true);
+  xmlhttp.open("POST", "src/api/generate_timetables.php", true);
   xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
   xmlhttp.send(queryString);
 };
@@ -105,7 +105,7 @@ const processCourseURL = () => {
   var encodedURL = encodeURIComponent(
     document.getElementById("courseURL").value
   );
-  xmlhttp.open("POST", "process_course_url.php", true);
+  xmlhttp.open("POST", "src/api/process_course_url.php", true);
   xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
   xmlhttp.send("course_id=" + courseCount + "&url=" + encodedURL);
 };

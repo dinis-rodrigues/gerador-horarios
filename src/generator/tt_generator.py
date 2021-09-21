@@ -1,156 +1,156 @@
-import string
-from tt_generator import *
-
-class HTMLPrettyPrinter:
+class TimetableGenerator:
 
     def __init__(self):
-        self.course_colors = {}
-        self.color_gen = color_generator()
-        self.table_id = 0
+        self.generated = []
+        self.total_combinations = 0
 
-    def color(self, course_name):
-        if not course_name in list(self.course_colors.keys()):
-            self.course_colors[course_name] = next(self.color_gen)
-        return self.course_colors[course_name]
+    def store_timetable(self, tt):
+        self.total_combinations += 1
+        tt.heuristic = tt.total_time()
+        
+        if len(self.generated) < 99:
+            self.generated.append(tt)
+        elif len(self.generated) == 99:
+            self.generated.append(tt)
+            self.move_worst_to_last()
+        else:
+            if tt.heuristic < self.generated[99].heuristic:  # tt is better
+                self.generated.pop(99)
+                self.generated.append(tt)
+                self.move_worst_to_last()
 
-    def print_timetables(self, timetables, total_combinations):
-        try:
-          print(intro(len(timetables), total_combinations))
-          for timetable in timetables:
-              self.table_id += 1
-              print(self.format_timetable(timetable, self.table_id))
-          print(outro())
-        except Exception as e:
-          print(e)
+    def move_worst_to_last(self):
+        worst_heuristic = 0
+        for timetable in self.generated:
+            if timetable.heuristic > worst_heuristic:
+                worst_heuristic = timetable.heuristic
+                worst_tt = timetable
+        self.generated.remove(worst_tt)
+        self.generated.append(worst_tt)
+    
+    def generate_timetables(self, lesson_blocks):
+        self.generate(Timetable(), lesson_blocks)
 
-    def format_timetable(self, timetable, table_id):
+    def generate(self, timetable, lesson_blocks):
+        if not lesson_blocks:
+            self.store_timetable(timetable)
+        else:
+            next_lesson_block = lesson_blocks[0]
+            for shift in next_lesson_block.shifts:
+                if timetable.supports(shift):
+                    self.generate(timetable.append_shift(shift), lesson_blocks[1:])
 
-        # initialize content for each cell
-        content = [["class='period-empty-slot' >&nbsp;" \
-                    for x in range(32)] \
-                   for y in range(6)]
+class Timetable:
 
-        # fill out the content according to the lesson slots
-        for slot in timetable.lessons:
-            day_i = slot.day
-            start_i = time_index(slot.start)
-            end_i = time_index(slot.end)
+    def __init__(self):
+        self.lessons = []
 
-            content[day_i][start_i] = "class='period-first-slot' "
-            content[day_i][end_i-1] = "class='period-last-slot' "
-            for time_i in range(start_i, end_i):
-                if time_i > start_i and time_i < end_i-1:
-                  content[day_i][time_i] = "class='period-middle-slot' "
-                content[day_i][time_i] += "style='background-color: %s'  " \
-                                          % (self.color(slot.course_name()))
-                content[day_i][time_i] += "headers='weekday%i hour%i'  " \
-                                          % (day_i, time_i)
-                content[day_i][time_i] += "title='%s-%s'> " \
-                                          % (slot.start, slot.end)
+    def append_shift(self, shift):
+        new_timetable = Timetable()
+        new_timetable.lessons.extend(self.lessons)
+        new_timetable.lessons.extend(shift.slots)
+        return new_timetable
 
+    def supports(self, shift):
+        for slot in shift.slots:
+            for existing in self.lessons:
+                if (slot.overlaps_with(existing)):
+                    return False
+        return True
 
+    #def is_feasible(self):
+    #    for slot in self.lessons:
+    #        for other in self.lessons:
+    #            if (slot is not other) and (slot.overlaps_with(other)):
+    #                return False
+    #    return True
 
+    # heuristics for selecting timetables
+    def total_time(self):
+        result = 0
+        for weekday in range(Weekday.MONDAY, Weekday.SUNDAY):
+            daily_lessons = [slot for slot in self.lessons if slot.day == weekday]
+            if daily_lessons:
+                earliest_start = min([slot.start.minutes for slot in daily_lessons])
+                latest_end = max([slot.end.minutes for slot in daily_lessons])
+                interval = latest_end - earliest_start
+                result += interval + 60
+        return result
+        
 
-            content[day_i][start_i] += "%s&nbsp;&nbsp;(%s)&nbsp;%s" \
-                                       % (slot.course_name(), slot.lesson_category(), slot.room)
+class Course(object):
 
-        # format the HTML for the timetable
-        html_result = [table_intro(table_id)]
-        for row in range(0,32):
-            html_result.append("              <tr>\n")
-            html_result.append("                <th  class='period-hours' id='hour%i'>%s-%s</th>\n" % (row, time_from_index(row), time_from_index(row+1)))
-            for column in range(0,6):
-                html_result.append("                <td  %s</td> \n" % (content[column][row]))
-            html_result.append("              </tr>\n")
-        html_result.append(table_outro())
-        return ''.join(html_result)
+    def __init__(self, name):
+        self.name = name
+        self.lesson_blocks = []
 
+    def add_lesson_block(self, lesson_block):
+        self.lesson_blocks.append(lesson_block)
+        lesson_block.parent_course = self
 
-def time_index(time):
-    return (time.minutes - 8*60) // 30
+    def get_block_by_category(self, category):
+        for block in self.lesson_blocks:
+            if block.category == category:
+                return block
 
-def time_from_index(index):
-    return Time(index//2 + 8, (index%2) * 30)
+class LessonBlock:
 
-def color_generator():
-    pallete = [ "#A8FFFF", "#AFEEEE", "#00FFFF", "#87CEFA", "#A8D4FF", \
-                "#B0C4DE", "#BAEDD3", "#7FFFD4", "#51FFA9", "#40E0D0", \
-                "#D8BAED", "#ADFF2F", "#32CD32", "#00FF7F", "#F9A8FF", \
-                "#FFBA51", "#FF9A00", "#FFA07A", "#F7AFB3", "#FFC0A8", \
-                "#FFC0CB", "#FFD700", "#FFDEAD", "#FFECA8", "#F0E68C", \
-                "#FFFFFF", "#F0FFF0", "#F0FFFF", "#F8F8FF", "#F5F5F5", \
-                "#FFF5EE", "#F5F5DC", "#FFFFF0", "#FDF5E6", "#FAEBD7", \
-                "#FFE4E1", "#FAF0E6"]
-    for color in pallete:
-        yield color
+    def __init__(self, category):
+        self.category = category
+        self.shifts = []
 
-def intro(total_selected, total_combinations):
-    return """\
-    <script type='text/javascript'>
-      var current = 1;
-      var total = %i;
+    def add_shift(self, shift):
+        self.shifts.append(shift)
+        shift.parent_lesson_block = self
 
-      function showTable(i) {
-        document.getElementById('tt'+i).style.display = 'block';
-      }
-      function hideTable(i) {
-        document.getElementById('tt'+i).style.display = 'none';
-      }
-      function updateLabel() {
-        document.getElementById('label').innerHTML = current+'/'+total;
-      }
-      function goRight() {
-        hideTable(current);
-        current = (current+total)%%total+1;
-        showTable(current);
-        updateLabel();
-      }
-      function goLeft() {
-        hideTable(current);
-        current = (current+total-2)%%total+1;
-        showTable(current);
-        updateLabel();
-      }
-    </script>
-    <p style='text-align: center'>
-      <b>Combinations: <span id='label'></span></b><br>
-      <span style='%sfont: 10px verdana'>(A mostrar os 100 horários mais compactos dum total de %i combinações)</span>
-    </p>
-    <table border='0'>
-      <tr>
-        <td style='width: 50px'> <div class="parentTriangle cursor-p"><span href="#" class="arrow left" onclick="goLeft()"></span></div> </td>
-        <td style='width: 100%%'>
-""" % (total_selected, "" if (total_selected < total_combinations) else "display:none;", total_combinations)
+class Shift:
 
-def table_intro(id_number):
-    return """\
-          <div style='display: none' id='tt%i' class='mtop15'>
-            <table class='timetable' style='margin-left: auto; margin-right: auto' cellspacing='0' cellpadding='0' width='98%%'>
-              <tr>
-                <th>Horas/Dias</th>
-                <th colspan='1' width='14%%' id='weekday0'>Segunda</th>
-                <th colspan='1' width='14%%' id='weekday1'>Terça</th>
-                <th colspan='1' width='14%%' id='weekday2'>Quarta</th>
-                <th colspan='1' width='14%%' id='weekday3'>Quinta</th>
-                <th colspan='1' width='14%%' id='weekday4'>Sexta</th>
-                <th colspan='1' width='14%%' id='weekday5'>Sábado</th>
-              </tr>
-""" % (id_number)
+    def __init__(self, name):
+        self.name = name
+        self.slots = []
 
-def table_outro():
-    return """\
-            </table>
-          </div>
-"""
+    def add_lesson_slot(self, lesson_slot):
+        self.slots.append(lesson_slot)
+        lesson_slot.parent_shift = self
 
-def outro():
-    return """\
-        </td>
-        <td style='width: 50px'> <div class="parentTriangle cursor-p"><span class="arrow right" onclick="goRight()"></span></div> </td>
-      </tr>
-    </table>
-    <script type='text/javascript'>
-      showTable(current);
-      updateLabel();
-    </script>"""
+class LessonSlot:
 
+    def __init__(self, day, start, end, room):
+        self.day = day
+        self.start = start
+        self.end = end
+        self.room = room
+
+    def course_name(self):
+        return self.parent_shift.parent_lesson_block.parent_course.name
+
+    def lesson_category(self):
+        return self.parent_shift.parent_lesson_block.category
+
+    def overlaps_with(self, other):
+        return self.day == other.day and \
+               self.start.is_before(other.end) and \
+               self.end.is_after(other.start)
+
+class Weekday:
+    MONDAY = 0
+    TUESDAY = 1
+    WEDNESDAY = 2
+    THURSDAY = 3
+    FRIDAY = 4
+    SATURDAY = 5
+    SUNDAY = 6
+
+class Time:
+
+    def __init__(self, hour, minute):
+        self.minutes = hour * 60 + minute
+
+    def is_before(self, other):
+        return self.minutes < other.minutes
+
+    def is_after(self, other):
+        return self.minutes > other.minutes
+
+    def __str__(self):
+        return "%d:%02d" % (self.minutes/60, self.minutes%60)

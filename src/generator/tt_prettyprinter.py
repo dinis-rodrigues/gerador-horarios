@@ -1,3 +1,4 @@
+import string
 from tt_generator import *
 
 class HTMLPrettyPrinter:
@@ -117,7 +118,7 @@ def intro(total_selected, total_combinations):
     </p>
     <table border='0'>
       <tr>
-        <td style='width: 50px'> <img style='cursor: pointer;' src='left.png' onclick='goLeft()'> </td>
+        <td style='width: 50px'> <div class="parentTriangle cursor-p"><span href="#" class="arrow left" onclick="goLeft()"></span></div> </td>
         <td style='width: 100%%'>
 """ % (total_selected, "" if (total_selected < total_combinations) else "display:none;", total_combinations)
 
@@ -145,7 +146,7 @@ def table_outro():
 def outro():
     return """\
         </td>
-        <td style='width: 50px'> <img style='cursor: pointer;' src='right.png' onclick='goRight()'> </td>
+        <td style='width: 50px'> <div class="parentTriangle cursor-p"><span class="arrow right" onclick="goRight()"></span></div> </td>
       </tr>
     </table>
     <script type='text/javascript'>

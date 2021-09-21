@@ -1,75 +1,115 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Gerador de Horários Compactos</title>
-    <link rel='stylesheet' type='text/css' media='screen' href='https://fenix.tecnico.ulisboa.pt/cursos/meic-a/static/css/publicPages.css' />
-    <link rel='stylesheet' type='text/css' media='screen' href='main.css' />
-    <script type="text/javascript">
-	  var courseCount = 0;
-	  
-      function showErrorMessage() { document.getElementById("errorMessage").style.visibility = "visible" }
-      function hideErrorMessage() { document.getElementById("errorMessage").style.visibility = "hidden" }
-      
-	  function processCourseURL() {
-        if (courseURL.value == '')
-          return
-        
-	    var xmlhttp = new XMLHttpRequest();
-        xmlhttp.onreadystatechange = function() {
-		  if (xmlhttp.readyState==4 && xmlhttp.status==200) {
-            if (xmlhttp.responseText == '')
-              showErrorMessage();
-            else {
-              hideErrorMessage();
-              document.getElementById("courseURL").value = "";
-		      document.getElementById("courses").innerHTML += xmlhttp.responseText;
-            }
-		  }
-		}
-		
-		courseCount++;
-		var encodedURL = encodeURIComponent(document.getElementById("courseURL").value);
-		xmlhttp.open("POST", "process_course_url.php", true);
-		xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-		xmlhttp.send("course_id="+courseCount + "&url="+encodedURL);
-	  }
-      
-      function removeCourse(course) { course.innerHTML = "" }
-	</script>
-  </head>
-  <body style="margin:15px">
-        <h2 style="font-family:'Verdana';font-size:16px">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>Gerador de Horários Compactos</title>
+  <meta name="description" content="O Original Gerador de Horários Compactos do Instituto Superior Técnico. Introduz as tuas disciplinas e gera automaticamente o melhor horário.">
+  <link rel='stylesheet' type='text/css' media='screen' href='https://fenix.tecnico.ulisboa.pt/cursos/meic-a/static/css/publicPages.css' />
+  <link rel='stylesheet' type='text/css' media='screen' href='assets/css/main.css' />
+  <!-- <link rel='stylesheet' type='text/css' media='screen,print' href='https://fenix.ist.utl.pt/CSS/dotist_timetables.css' /> -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+  <script src="https://kit.fontawesome.com/355215b238.js" crossorigin="anonymous"></script>
+</head>
+
+<body style="margin:15px">
+  <div class="section">
+    <div id="IDexemplo" class="shadow alertCUSTOM info text-center" style="font-size: large;">
+      <p>
+      <h2 class=""><b>Recrutamento Técnico Solar Boat</b> </h2>
+      </p>
+      <p>
+        <span class="btn btn-field ai text-white" style="cursor: default;">Inteligência Artificial</span>
+        <span class="btn btn-field solar text-white" style="cursor: default;">Energia Solar</span>
+        <span class="btn btn-field hydrogen text-white" style="cursor: default;">Hidrogénio</span>
+        <span class="btn btn-field composites text-white" style="cursor: default;">Compósitos Avançados</span>
+        <span class="btn btn-field hydrofoils text-white" style="cursor: default;">Hydrofoils</span>
+      <p>Estas são apenas algumas das areas que desenvolvemos, estás interessado ? <a class="btn apply text-white" href="https://tecnicosolarboat.tecnico.ulisboa.pt/recruta" target="_blank"><b>Candidata-te!</b></a></p>
+      <hr>
+      </p>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="row">
+      <div class="col">
+        <h2>
           <b> Gerador de Horários Compactos </b>
         </h2>
-        <br>
-        
-        <div class="mtop1 coutput2" style="line-height: 1.5em;font-family:'Verdana';font-size:12px">
-        <ul>
-          <li>Introduza o URL de cada disciplina no formulário abaixo e prima o botão [+].</li>
-              (e.g. para Álgebra Linear - LEIC-A, introduza <i>https://fenix.tecnico.ulisboa.pt/disciplinas/AL425/2014-2015/1-semestre</i>)
-          <li>Pode de seguida escolher os tipos de aula a incluir no horário (i.e. teóricas, laboratórios, etc).</li>
-          <li>Para terminar, prima [Submit].</li>
-        </ul>
-        </div>
-        <br>
-        
-        <div id='errorMessage' style="font-family:'Verdana';color:#DD0000;visibility:hidden">Ocorreu um erro na obtenção da disciplina. É possível que o URL esteja mal formado.</div>
-        
-        <form action="generate_timetables.php" method="post">
-          <p style="font-family:'Verdana'">
-            URL: <input type="text" id="courseURL" value="" size="80px" onkeypress="if (event.keyCode == 13) { processCourseURL(); return false; }" >
-            <button type="button" onclick="processCourseURL()">+</button>
-            <input type="submit" value="Submit">
-          </p>
-          <div id="courses">
-            <!-- html is inserted here -->
-          </div>
-        </form>
+      </div>
+      <div class="col-auto">
+        <span class="shadow btn btn-primary" style="cursor: default;">
+          Visits <span class="badge badge-danger" id="visits">0</span>
+        </span>
+      </div>
+    </div>
+  </div>
 
-        <div id="footer" class="mtop1 coutput2" style="line-height: 4em;font-family:'Verdana';font-size:10px">
-            Copyright &copy 2013-2015 Pedro P. Ramos
+  <br>
+
+  <div class="section">
+    <div class="mtop1 coutput2" style="line-height: 1.5em;font-family:'Verdana';font-size:12px">
+      <ul>
+        <li>Introduz o URL de cada disciplina no formulário abaixo e carrega no botão [Add].</li>
+        (e.g. para Álgebra Linear - LEIC-A, introduz <i>https://fenix.tecnico.ulisboa.pt/disciplinas/AL425/2014-2015/1-semestre</i>)
+        <li>Podes de seguida escolher os tipos de aula a incluir no horário (i.e. teóricas, laboratórios, etc).</li>
+        <li>O horário irá actualizar a cada mudança que fizeres. Todas as combinações, sem sobreposição possivéis serão mostradas. Cabe-te a ti escolher a melhor opção!</li>
+        <li>As combinações apresentadas estão ordenadas de forma a que tenhas o horário mais compacto possivel, dados os turnos escolhidos.</li>
+        <li>Podes usar as setas <kbd>&rightarrow;</kbd> e <kbd>&leftarrow;</kbd> do teclado para rapidamente veres os horários </li>
+        <li>Para actualizar, carrega [Update].</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="row col">
+    <div id='errorMessage' class="m-1">
+      <span class="bg-danger text-white p-2 rounded" style="display:none;">Ocorreu um erro na obtenção da disciplina. É possível que o URL esteja mal formado.</span>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="row mt-2">
+      <!-- <form action="generate_timetables.php" target="_blank" method="post"> -->
+      <form id="myForm" onsubmit="return false" method="post">
+        <div class="input-group" style="width: 70%;">
+          <span class="btn btn-primary" style="cursor: default;">URL</span>
+          <input id="courseURL" type="text" class="form-control" value="" onkeypress="if (event.keyCode == 13) { processCourseURL(); return false; }" placeholder="e.g. https://fenix.tecnico.ulisboa.pt/disciplinas/AL425/2014-2015/1-semestre">
+          <button class="btn btn-outline-success" type="button" onclick="processCourseURL()">Add</button>
+          <input id="submitButton" onclick="submitForm()" class="btn btn-outline-primary" type="submit" value="Update">
         </div>
-        
-  </body>
+
+        <div id="courses" style="display: inline-flex;">
+          <!-- html is inserted here -->
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div class="section" id="scheduleTable"></div>
+
+
+  <div class="section">
+    <div class="row mt-5">
+      <img src="sr03sm01.png" style="width:100%;">
+    </div>
+  </div>
+
+
+  <div id="footer" class="mtop1 coutput2" style="line-height: 4em;font-family:'Verdana';font-size:20px; color:#cccc00;">
+    <span> Forked from <a class="creator" target="_blank" href="https://github.com/pedropramos/gerador-horarios">Pedro P. Ramos</a> - Hosted and Maintained by Técnico Solar Boat &#128747</span>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
+  <script src="https://inorganik.github.io/countUp.js/dist/countUp.umd.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.min.js" integrity="sha384-skAcpIdS7UcVUC05LJ9Dxay8AXcDYfBJqt1CJ85S/CFujBsIzCIv+l9liuYLaMQ/" crossorigin="anonymous"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.21.0/firebase-app.js"></script>
+  <!-- TODO: Add SDKs for Firebase products that you want to use
+                                 https://firebase.google.com/docs/web/setup#available-libraries -->
+  <script src="https://www.gstatic.com/firebasejs/7.21.0/firebase-database.js"></script>
+
+  <script type="text/javascript" src="src/client/"></script>
+  <script type="text/javascript" src="src/client/"></script>
+</body>
+
 </html>
